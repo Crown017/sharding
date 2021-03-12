@@ -1,8 +1,10 @@
 package com.crown.sharding.controller;
 
 import com.crown.sharding.entity.Book;
+import com.crown.sharding.entity.Order;
 import com.crown.sharding.entity.User;
 import com.crown.sharding.mapper.BookMapper;
+import com.crown.sharding.mapper.OrderMapper;
 import com.crown.sharding.mapper.UserMapper;
 import org.apache.shardingsphere.core.strategy.keygen.SnowflakeShardingKeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class UserController {
 
     @Resource
     private BookMapper bookMapper;
+
+    @Resource
+    private OrderMapper orderMapper;
 
     @Resource
     SnowflakeShardingKeyGenerator userKeyGenerator;
@@ -67,4 +72,32 @@ public class UserController {
         }
         return "success";
     }
+
+
+    @GetMapping("/book/{bookId}")
+    @ResponseBody
+    public Book getBook(@PathVariable("bookId") Long bookId){
+        Book book = bookMapper.getBook(bookId);
+        return book;
+    }
+
+
+    @GetMapping("/order/createOrder")
+    @ResponseBody
+    public String createOrder(@RequestParam("userId") Integer userId){
+        Order order = new Order();
+        order.setOrderId((Long) userKeyGenerator.generateKey());
+        order.setUserId(userId);
+        orderMapper.save(order);
+        return "success";
+    }
+
+
+    @GetMapping("/getOrderInfo/{orderId}")
+    @ResponseBody
+    public Order getOrderInfo(@PathVariable("orderId") Long order){
+        Order orderById = orderMapper.getOrderById(order);
+        return orderById;
+    }
+
 }

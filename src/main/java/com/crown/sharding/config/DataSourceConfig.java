@@ -1,19 +1,22 @@
 package com.crown.sharding.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.crown.sharding.algorithm.HintOrderAlgorithm;
 import com.crown.sharding.entity.UserShardingAlgorithm;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
+import org.apache.shardingsphere.api.config.sharding.strategy.HintShardingStrategyConfiguration;
+import org.apache.shardingsphere.api.config.sharding.strategy.NoneShardingStrategyConfiguration;
+import org.apache.shardingsphere.api.config.sharding.strategy.ShardingStrategyConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.StandardShardingStrategyConfiguration;
+import org.apache.shardingsphere.core.rule.TableRule;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Configuration
 public class DataSourceConfig {
@@ -66,12 +69,19 @@ public class DataSourceConfig {
             // 配置分表规则
             userRuleConfiguration.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("id",
                     UserShardingAlgorithm.tableShardingAlgorithm));
-
             // 配置分库规则
             userRuleConfiguration.setDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration("id", UserShardingAlgorithm.databaseShardingAlgorithm));
             // Sharding全局配置
             ShardingRuleConfiguration shardingRuleConfiguration = new ShardingRuleConfiguration();
-            shardingRuleConfiguration.getTableRuleConfigs().add(userRuleConfiguration);
+
+            TableRuleConfiguration orderRuleConfigration = new TableRuleConfiguration("t_order","ds0.t_order_${0..1}");
+            orderRuleConfigration.setDatabaseShardingStrategyConfig(new HintShardingStrategyConfiguration(new HintOrderAlgorithm()));
+            orderRuleConfigration.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("order_id",UserShardingAlgorithm.tableShardingAlgorithm));
+            Collection<TableRuleConfiguration> tableRuleConfigs = shardingRuleConfiguration.getTableRuleConfigs();
+            tableRuleConfigs.add(userRuleConfiguration);
+            tableRuleConfigs.add(orderRuleConfigration);
+            shardingRuleConfiguration.setDefaultDataSourceName("ds0");
+            shardingRuleConfiguration.setDefaultTableShardingStrategyConfig(new NoneShardingStrategyConfiguration());
             // 创建数据源
             DataSource dataSource = ShardingDataSourceFactory.createDataSource(dataSourceMap, shardingRuleConfiguration, new Properties());
             return dataSource;

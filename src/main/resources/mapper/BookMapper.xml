@@ -6,4 +6,10 @@
        INSERT INTO `t_book`(`bookName`, `price`, `pub`, `releaseTime`, `id`)
        VALUES (#{bookName}, #{price}, #{pub},#{releaseTime}, #{id});
     </insert>
+
+    <select id="getBook" resultType="com.crown.sharding.entity.Book">
+        select  *
+        from   t_book
+        where id =#{id}
+    </select>
 </mapper>

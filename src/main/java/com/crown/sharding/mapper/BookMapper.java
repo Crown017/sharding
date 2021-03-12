@@ -1,6 +1,7 @@
 package com.crown.sharding.mapper;
 
 import com.crown.sharding.entity.Book;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * @author luhaihui
@@ -8,4 +9,6 @@ import com.crown.sharding.entity.Book;
  */
 public interface BookMapper {
     void save(Book book);
+
+    Book getBook(@Param("id") Long id);
 }
