@@ -6,7 +6,7 @@ package com.crown.sharding.entity;
  */
 public class Order {
     private Long orderId;
-    private Integer userId;
+    private Long userId;
 
     public Long getOrderId() {
         return orderId;
@@ -16,11 +16,11 @@ public class Order {
         this.orderId = orderId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 }

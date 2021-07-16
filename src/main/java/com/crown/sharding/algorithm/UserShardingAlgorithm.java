@@ -1,4 +1,4 @@
-package com.crown.sharding.entity;
+package com.crown.sharding.algorithm;
 
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
@@ -13,9 +13,7 @@ public class UserShardingAlgorithm {
         @Override
         public String doSharding(Collection<String> databaseNames, PreciseShardingValue<Long> shardingValue) {
             for (String database : databaseNames) {
-                if (database.endsWith(String.valueOf(shardingValue.getValue() % 2))) {
-                    return database;
-                }
+               return database;
             }
 
             return "";

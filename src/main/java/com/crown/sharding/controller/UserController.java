@@ -2,6 +2,7 @@ package com.crown.sharding.controller;
 
 import com.crown.sharding.entity.Book;
 import com.crown.sharding.entity.Order;
+import com.crown.sharding.entity.OrderResult;
 import com.crown.sharding.entity.User;
 import com.crown.sharding.mapper.BookMapper;
 import com.crown.sharding.mapper.OrderMapper;
@@ -82,22 +83,6 @@ public class UserController {
     }
 
 
-    @GetMapping("/order/createOrder")
-    @ResponseBody
-    public String createOrder(@RequestParam("userId") Integer userId){
-        Order order = new Order();
-        order.setOrderId((Long) userKeyGenerator.generateKey());
-        order.setUserId(userId);
-        orderMapper.save(order);
-        return "success";
-    }
 
-
-    @GetMapping("/getOrderInfo/{orderId}")
-    @ResponseBody
-    public Order getOrderInfo(@PathVariable("orderId") Long order){
-        Order orderById = orderMapper.getOrderById(order);
-        return orderById;
-    }
 
 }
